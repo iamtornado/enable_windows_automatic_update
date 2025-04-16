@@ -94,20 +94,20 @@ param
 $adtSession = @{
     # App variables.
     AppVendor = ''
-    AppName = ''
-    AppVersion = ''
+    AppName = 'enable_windows_automatic_update'
+    AppVersion = '1.0.0'
     AppArch = ''
     AppLang = 'EN'
     AppRevision = '01'
     AppSuccessExitCodes = @(0)
     AppRebootExitCodes = @(1641, 3010)
     AppScriptVersion = '1.0.0'
-    AppScriptDate = '2000-12-31'
-    AppScriptAuthor = '<author name>'
+    AppScriptDate = '2025-04-16'
+    AppScriptAuthor = 'tornado'
 
     # Install Titles (Only set here to override defaults set by the toolkit).
-    InstallName = ''
-    InstallTitle = ''
+    InstallName = 'enable_windows_automatic_update'
+    InstallTitle = 'enable_windows_automatic_update'
 
     # Script variables.
     DeployAppScriptFriendlyName = $MyInvocation.MyCommand.Name
@@ -123,10 +123,11 @@ function Install-ADTDeployment
     $adtSession.InstallPhase = "Pre-$($adtSession.DeploymentType)"
 
     ## Show Welcome Message, close Internet Explorer if required, allow up to 3 deferrals, verify there is enough disk space to complete the install, and persist the prompt.
-    Show-ADTInstallationWelcome -CloseProcesses iexplore -AllowDefer -DeferTimes 3 -CheckDiskSpace -PersistPrompt
+    # Show-ADTInstallationWelcome -CloseProcesses iexplore -AllowDefer -DeferTimes 3 -CheckDiskSpace -PersistPrompt
+    Show-ADTInstallationPrompt -Message "Configuring group policies, please wait...`n`nThis program is developed by MingYang Group Digital Process Center." -ButtonRightText 'OK' -Icon Information -Timeout 10 -NoExitOnTimeout
 
-    ## Show Progress Message (with the default message).
-    Show-ADTInstallationProgress
+    # Show progress message to keep user informed about the current operation
+    Show-ADTInstallationProgress -StatusMessage "Configuring group policies, please wait..."
 
     ## <Perform Pre-Installation tasks here>
 
@@ -152,8 +153,39 @@ function Install-ADTDeployment
     }
 
     ## <Perform Installation tasks here>
+    # Remove Windows Update registry keys recursively
+    Remove-ADTRegistryKey -Key "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -Recurse -Verbose -ErrorAction SilentlyContinue
+<#     if (Test-Path -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate') {
+        Remove-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" -Recurse -Force -ErrorAction SilentlyContinue
+    } #>
+    # Configure Windows Servicing settings
+    if (Get-ADTRegistryKey -Key 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\Servicing') {
+        # Check if RepairContentServerSource is already set to 2
+        if ((Get-ADTRegistryKey -Key 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\Servicing' -Name 'RepairContentServerSource') -eq 2) {
+            Write-ADTLogEntry -Message "Registry key HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\Servicing\RepairContentServerSource is already set to 2, no changes needed." -LogTyp 'CMTrace'
+        }else {
+            # Set RepairContentServerSource to 2 if not already set
+            Set-ADTRegistryKey -Key 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\Servicing' -Name 'RepairContentServerSource' -Type 'DWord' -Value '2'
+        }
+    }else {
+        # Create and set RepairContentServerSource if the key doesn't exist
+        Set-ADTRegistryKey -Key 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\Servicing' -Name 'RepairContentServerSource' -Type 'DWord' -Value '2'
+    }
 
+    if((Get-ADTServiceStartMode -Service (Get-Service -Name 'wuauserv')) -ne 'Automatic' -or (Get-Service -Name 'wuauserv').Status -ne 'Running')
+    {
+        Set-ADTServiceStartMode -Service (Get-Service -Name 'wuauserv') -StartMode 'Automatic' -Verbose
+        # Start-ADTServiceAndDependencies -Name 'wuauserv'
+        Start-Service -Name 'wuauserv' -Verbose
+    }
+    if((Get-ADTServiceStartMode -Service (Get-Service -Name 'bits')) -ne 'Automatic' -or (Get-Service -Name 'bits').Status -ne 'Running')
+    {
+        Set-ADTServiceStartMode -Service (Get-Service -Name 'bits') -StartMode 'Automatic' -Verbose
+        # Start-ADTServiceAndDependencies -Name 'bits'
+        Start-Service -Name 'bits' -Verbose
+    }
 
+    Update-ADTGroupPolicy
     ##================================================
     ## MARK: Post-Install
     ##================================================
@@ -165,7 +197,7 @@ function Install-ADTDeployment
     ## Display a message at the end of the install.
     if (!$adtSession.UseDefaultMsi)
     {
-        Show-ADTInstallationPrompt -Message 'You can customize text to appear at the end of an install or remove it completely for unattended installations.' -ButtonRightText 'OK' -Icon Information -NoWait
+        Show-ADTInstallationPrompt -Message "Configuration completed! You can now freely add language packs, install apps from Microsoft Store, and add optional features.`nNote: Changes will be reverted after system reboot!" -ButtonRightText 'OK' -Icon Information -NoWait
     }
 }
 
