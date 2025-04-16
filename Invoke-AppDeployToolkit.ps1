@@ -124,7 +124,7 @@ function Install-ADTDeployment
 
     ## Show Welcome Message, close Internet Explorer if required, allow up to 3 deferrals, verify there is enough disk space to complete the install, and persist the prompt.
     # Show-ADTInstallationWelcome -CloseProcesses iexplore -AllowDefer -DeferTimes 3 -CheckDiskSpace -PersistPrompt
-    Show-ADTInstallationPrompt -Message "Configuring group policies, please wait...`n`nThis program is developed by MingYang Group Digital Process Center." -ButtonRightText 'OK' -Icon Information -Timeout 10 -NoExitOnTimeout
+    Show-ADTInstallationPrompt -Message "Configuring group policies, please wait...`n`nThis program is developed by XXX Department." -ButtonRightText 'OK' -Icon Information -Timeout 10 -NoExitOnTimeout
 
     # Show progress message to keep user informed about the current operation
     Show-ADTInstallationProgress -StatusMessage "Configuring group policies, please wait..."
