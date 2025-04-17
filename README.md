@@ -16,6 +16,16 @@ A PowerShell-based deployment tool designed for enterprise environments to tempo
 - Multi-language support (English, German, French, Russian, Chinese, etc.)
 - Automatic cleanup after execution
 
+## Getting Help
+If you encounter any issues:
+- [Open an Issue](https://github.com/iamtornado/enable_windows_automatic_update/issues)
+- [Start a Discussion](https://github.com/iamtornado/enable_windows_automatic_update/discussions)
+- Contact the author directly:
+  - Email: 1426693102@qq.com
+  - QQ Group: 715152187
+  - WeChat Official Account: AI发烧友
+  ![WeChat QR Code](AI发烧友公众号宣传图片.png)
+
 ## Use Cases
 - When IT needs to temporarily grant update permissions
 - When users need to install specific Store apps
@@ -41,3 +51,13 @@ A PowerShell-based deployment tool designed for enterprise environments to tempo
 ## Silent Deployment
 ```bash
 enable_windows_automatic_update-V1.2.exe /silent
+```
+
+## Author
+
+- Name: iamtornado
+- Website: https://github.com/iamtornado
+- Email: 1426693102@qq.com
+- QQ group: 715152187
+- WeChat Official Account: AI发烧友
+![alt text](AI发烧友公众号宣传图片.png)

@@ -1,9 +1,17 @@
 ﻿
 # 企业环境Windows自动更新临时启用工具
-
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPL_v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
+[English](README.md) | [中文文档](README_zh.md)
 
-专为企业环境设计的PowerShell部署工具，可临时启用Windows自动更新功能，方便终端用户完成特定系统更新任务。
+## 获取帮助
+如果您遇到任何问题：
+- [提交Issue](https://github.com/iamtornado/enable_windows_automatic_update/issues)
+- [参与讨论](https://github.com/iamtornado/enable_windows_automatic_update/discussions)
+- 直接联系作者：
+  - 邮箱：1426693102@qq.com
+  - QQ群：715152187  
+  - 微信公众号：AI发烧友
+  ![微信公众号二维码](AI发烧友公众号宣传图片.png)
 
 ## 功能特性
 - **临时启用** Windows自动更新功能（重启后自动还原）
@@ -42,3 +50,13 @@
 ## 静默部署
 ```bash
 enable_windows_automatic_update-V1.2.exe /silent
+```
+
+## Author
+
+- Name: iamtornado
+- Website: https://github.com/iamtornado
+- Email: 1426693102@qq.com
+- QQ group: 715152187
+- WeChat Official Account: AI发烧友
+![alt text](AI发烧友公众号宣传图片.png)
